@@ -29,8 +29,12 @@ function keyWasPressed (keyCode, game) {
 }
 
 function keyWasReleased (keyCode, game) {
-  game.player1.stop()
-  game.player2.stop()
+
+  if (keyCode === 87 || keyCode === 83) {
+    game.player1.stop()
+  } else if (keyCode === 38 || keyCode === 40) {
+    game.player2.stop()
+  }
 }
 
 function Player (game, maxSpeed) {
