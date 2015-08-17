@@ -46,7 +46,7 @@ function Player (game, maxSpeed) {
 
   this.game = game
 
-  this.maxSpeed = maxSpeed || 15
+  this.maxSpeed = maxSpeed || 12
 
   this.speed = 0
 
@@ -83,7 +83,37 @@ function Player (game, maxSpeed) {
 
   this.accelerate = function () {
     if (self.speed < self.maxSpeed) {
-      self.speed += 1
+      self.speed += 2
+    }
+  }
+
+  this.collidedWithBall = function (ball) {
+
+    ball.xVelocity = ball.xVelocity > 0 ? (ball.xVelocity + 0.5) * -1 : (ball.xVelocity - 0.5) * -1
+
+    // prevent overlapping multiple collisions
+    if (ball.x < ball.game.canvas.width / 2) {
+      ball.x = self.x + self.width
+    } else {
+      ball.x = self.x - ball.width
+    }
+
+    self.affectBallYVelocity(ball)
+  }
+
+  this.affectBallYVelocity = function (ball) {
+
+    // Ball's y speed is affected by how fast the paddle is moving on impact
+    var speedModifier = self.speed / self.maxSpeed
+    var newSpeed = ball.maxYVelocity * speedModifier
+
+    ball.yVelocity = newSpeed > ball.minYVelocity ? newSpeed : ball.minYVelocity
+
+    // Ball's y direction is affected by direction the paddle is moving on impact
+    if (self.movingUp) {
+      ball.yVelocity = Math.abs(ball.yVelocity) * -1
+    } else if (self.movingDown) {
+      ball.yVelocity = Math.abs(ball.yVelocity)
     }
   }
 
@@ -108,6 +138,9 @@ function Ball (game) {
 
   this.xVelocity = -2
   this.yVelocity = 5
+
+  this.minYVelocity = 2
+  this.maxYVelocity = 10
 
   this.game = game
 
@@ -159,14 +192,7 @@ function Ball (game) {
 
   this.checkPlayerCollision = function (player) {
     if (Utils.didCollide(player, self)) {
-      self.xVelocity *= -1
-
-      // prevent overlapping multiple collisions
-      if (self.x < self.game.canvas.width / 2) {
-        self.x = player.x + player.width
-      } else {
-        self.x = player.x - self.width
-      }
+      player.collidedWithBall(self)
     }
   }
 }
