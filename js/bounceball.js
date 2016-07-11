@@ -254,8 +254,8 @@
 
     this.drawScore = function () {
       self.ctx.font = fontSize + ' ' + font
-      self.ctx.fillText(self.player1.score, 200, 40)
-      self.ctx.fillText(self.player2.score, 300, 40)
+      self.ctx.fillText(self.player1.score, (originalWidth / 2) - (originalWidth / 7), 40)
+      self.ctx.fillText(self.player2.score, (originalWidth / 2) + (originalWidth / 7), 40)
     }
 
     this.reset = function () {
