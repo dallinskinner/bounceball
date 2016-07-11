@@ -6,7 +6,7 @@
 
   var originalHeight, originalWidth
 
-  const devicePixelRation = window.devicePixelRation || 1
+  var devicePixelRatio = window.devicePixelRatio || 1
 
   BounceBall.init = function(canvasID, customFont, customFontSize) {
     var canvas = document.getElementById(canvasID)
@@ -14,13 +14,9 @@
     originalWidth = canvas.width
     originalHeight = canvas.height
 
-    canvas.width = originalWidth * devicePixelRatio;
-    canvas.height = originalHeight * devicePixelRatio;
-    canvas.style.width = originalWidth + 'px'
-    canvas.style.height = originalHeight + 'px'
-    canvas.getContext('2d').scale(devicePixelRatio,devicePixelRatio)
+    rescale(canvas)
 
-    font = customFont || font;
+    font = customFont || font
     fontSize = customFontSize || fontSize
 
     var game = new Game(canvas)
@@ -29,6 +25,14 @@
     window.addEventListener('keyup', function (e) { keyWasReleased(e.keyCode, game) }, true)
 
     setInterval(function () { loop(game) }, 1000 / FPS)
+  }
+
+  function rescale(canvas) {
+    canvas.width = originalWidth * devicePixelRatio
+    canvas.height = originalHeight * devicePixelRatio
+    canvas.style.width = originalWidth + 'px'
+    canvas.style.height = originalHeight + 'px'
+    canvas.getContext('2d').scale(devicePixelRatio,devicePixelRatio)
   }
 
   function loop (game) {
@@ -234,6 +238,12 @@
     }
 
     this.draw = function () {
+
+      if (window.devicePixelRatio != devicePixelRatio) {
+        devicePixelRatio = window.devicePixelRatio;
+        rescale(self.canvas)
+      }
+
       self.ctx.clearRect(0, 0, self.canvas.width, self.canvas.height)
 
       self.player1.draw(self.ctx)
@@ -243,7 +253,7 @@
     }
 
     this.drawScore = function () {
-      self.ctx.font = fontSize + ' ' + font;
+      self.ctx.font = fontSize + ' ' + font
       self.ctx.fillText(self.player1.score, 200, 40)
       self.ctx.fillText(self.player2.score, 300, 40)
     }
@@ -269,4 +279,4 @@
     }
   }
 
-}( window.BounceBall = window.BounceBall || {} ));
+}( window.BounceBall = window.BounceBall || {} ))
