@@ -3,12 +3,13 @@
   var FPS = 60
   var font = 'Inconsolata'
   var fontSize = '40px'
+  var color = '#ff0000'
 
   var originalHeight, originalWidth
 
   var devicePixelRatio = window.devicePixelRatio || 1
 
-  BounceBall.init = function(canvasID, customFont, customFontSize) {
+  BounceBall.init = function(canvasID, customFont, customFontSize, customColor) {
     var canvas = document.getElementById(canvasID)
 
     originalWidth = canvas.width
@@ -18,6 +19,7 @@
 
     font = customFont || font
     fontSize = customFontSize || fontSize
+    color = customColor || color
 
     var game = new Game(canvas)
 
@@ -151,7 +153,7 @@
     }
 
     this.draw = function (ctx) {
-      ctx.fillStyle = '#FF0000'
+      ctx.fillStyle = color
       ctx.fillRect(self.x, self.y, self.width, self.height)
     }
   }
