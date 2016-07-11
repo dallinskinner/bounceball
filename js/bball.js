@@ -1,7 +1,7 @@
 var FPS = 60
 
 function init () {
-  var canvas = document.getElementById('pongboard')
+  var canvas = document.getElementById('ballboard')
 
   var game = new Game(canvas)
 
@@ -248,5 +248,3 @@ var Utils = {
       obj1.height + obj1.y > obj2.y)
   }
 }
-
-init()
