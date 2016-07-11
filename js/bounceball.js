@@ -5,12 +5,18 @@
   var fontSize = '40px'
   var color = '#ff0000'
 
+  var loopInterval
+  var game
+
   var originalHeight, originalWidth
 
   var devicePixelRatio = window.devicePixelRatio || 1
 
   BounceBall.init = function(canvasID, customFont, customFontSize, customColor) {
     var canvas = document.getElementById(canvasID)
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
 
     originalWidth = canvas.width
     originalHeight = canvas.height
@@ -21,12 +27,14 @@
     fontSize = customFontSize || fontSize
     color = customColor || color
 
-    var game = new Game(canvas)
+    game = new Game(canvas)
 
     window.addEventListener('keydown', function (e) { keyWasPressed(e.keyCode, game) }, true)
     window.addEventListener('keyup', function (e) { keyWasReleased(e.keyCode, game) }, true)
 
-    setInterval(function () { loop(game) }, 1000 / FPS)
+    initialized = true
+
+    this.resume()
   }
 
   function rescale(canvas) {
@@ -37,9 +45,36 @@
     canvas.getContext('2d').scale(devicePixelRatio,devicePixelRatio)
   }
 
+  function resizeGame() {
+
+    if (game) {
+      originalWidth = window.innerWidth
+      originalHeight = window.innerHeight
+      game.player2.resize()
+      rescale(game.canvas)
+    }
+
+  }
+
+  window.onresize = function(event) {
+    resizeGame();
+  }
+
   function loop (game) {
     game.update()
     game.draw()
+  }
+
+  BounceBall.pause = function () {
+    clearInterval(loopInterval);
+  }
+
+  BounceBall.resume = function () {
+    loopInterval = setInterval(function () { loop(game) }, 1000 / FPS)
+  }
+
+  BounceBall.isInitialized = function () {
+    return game;
   }
 
   function keyWasPressed (keyCode, game) {
@@ -67,7 +102,7 @@
     this.width = 10
     this.height = 40
 
-    this.x = game.player1 ? originalWidth - this.width * 2 : this.width * 2
+    this.x = game.player1 ? originalWidth - this.width * 3 : this.width * 2
     this.y = originalHeight / 2 - this.height / 2
 
     this.game = game
@@ -99,6 +134,10 @@
 
         }
       }
+    }
+
+    this.resize = function () {
+      this.x = game.player1 ? originalWidth - this.width * 3 : this.width * 2
     }
 
     this.stop = function () {
