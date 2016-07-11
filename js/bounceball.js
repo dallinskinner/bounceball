@@ -1,9 +1,14 @@
 (function( BounceBall, undefined) {
 
   var FPS = 60
+  var font = 'Inconsolata'
+  var fontSize = '40px'
 
-  BounceBall.init = function(canvasID) {
+  BounceBall.init = function(canvasID, customFont, customFontSize) {
     var canvas = document.getElementById(canvasID)
+
+    font = customFont || font;
+    fontSize = customFontSize || fontSize
 
     var game = new Game(canvas)
 
@@ -225,7 +230,7 @@
     }
 
     this.drawScore = function () {
-      self.ctx.font = '40px Inconsolata'
+      self.ctx.font = fontSize + ' ' + font; 
       self.ctx.fillText(self.player1.score, 200, 40)
       self.ctx.fillText(self.player2.score, 300, 40)
     }
