@@ -4,8 +4,21 @@
   var font = 'Inconsolata'
   var fontSize = '40px'
 
+  var originalHeight, originalWidth
+
+  const devicePixelRation = window.devicePixelRation || 1
+
   BounceBall.init = function(canvasID, customFont, customFontSize) {
     var canvas = document.getElementById(canvasID)
+
+    originalWidth = canvas.width
+    originalHeight = canvas.height
+
+    canvas.width = originalWidth * devicePixelRatio;
+    canvas.height = originalHeight * devicePixelRatio;
+    canvas.style.width = originalWidth + 'px'
+    canvas.style.height = originalHeight + 'px'
+    canvas.getContext('2d').scale(devicePixelRatio,devicePixelRatio)
 
     font = customFont || font;
     fontSize = customFontSize || fontSize
@@ -48,8 +61,8 @@
     this.width = 10
     this.height = 40
 
-    this.x = game.player1 ? game.canvas.width - this.width * 2 : this.width * 2
-    this.y = game.canvas.height / 2 - this.height / 2
+    this.x = game.player1 ? originalWidth - this.width * 2 : this.width * 2
+    this.y = originalHeight / 2 - this.height / 2
 
     this.game = game
 
@@ -73,7 +86,7 @@
 
         }
       } else if (self.movingDown) {
-        if (self.y < self.game.canvas.height - self.height) {
+        if (self.y < originalHeight - self.height) {
 
           self.accelerate()
           self.y += self.speed
@@ -99,7 +112,7 @@
       ball.xVelocity = ball.xVelocity > 0 ? (ball.xVelocity + 0.5) * -1 : (ball.xVelocity - 0.5) * -1
 
       // prevent overlapping multiple collisions
-      if (ball.x < ball.game.canvas.width / 2) {
+      if (ball.x < originalWidth / 2) {
         ball.x = self.x + self.width
       } else {
         ball.x = self.x - ball.width
@@ -129,7 +142,7 @@
     }
 
     this.reset = function () {
-      self.y = self.game.canvas.height / 2 - self.height / 2
+      self.y = originalHeight / 2 - self.height / 2
       self.score = 0
     }
 
@@ -140,8 +153,8 @@
   }
 
   function Ball (game) {
-    this.x = game.canvas.width / 2
-    this.y = game.canvas.height / 2
+    this.x = originalWidth / 2
+    this.y = originalHeight / 2
 
     this.xVelocity = -2
     this.yVelocity = 5
@@ -184,7 +197,7 @@
     this.checkHorizontalCollision = function () {
       if (self.y <= 0) {
         self.yVelocity *= -1
-      } else if (self.y > self.game.canvas.height) {
+      } else if (self.y > originalHeight) {
         self.yVelocity *= -1
       }
     }
@@ -192,7 +205,7 @@
     this.checkVerticalCollision = function () {
       if (self.x <= 0) {
         self.game.playerDidScore(self.game.player2)
-      } else if (self.x >= self.game.canvas.width) {
+      } else if (self.x >= originalWidth) {
         self.game.playerDidScore(self.game.player1)
       }
     }
@@ -230,7 +243,7 @@
     }
 
     this.drawScore = function () {
-      self.ctx.font = fontSize + ' ' + font; 
+      self.ctx.font = fontSize + ' ' + font;
       self.ctx.fillText(self.player1.score, 200, 40)
       self.ctx.fillText(self.player2.score, 300, 40)
     }
